@@ -35,7 +35,7 @@ const contactsSlice = createSlice({
         state.error = action.payload || 'Failed to add contact.';
       })
       .addCase(deleteContact.fulfilled, (state, action) => {
-        const id = action.payload;
+        const id = action.meta.arg; 
         state.list = state.list.filter(contact => contact.id !== id);
       })
       .addCase(deleteContact.rejected, (state, action) => {

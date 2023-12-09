@@ -17,9 +17,8 @@ const Filter = () => {
         name="filter"
         value={filter}
         onChange={handleFilterChange}
-        placeholder="Search contacts..."
+        placeholder="Пошук контактів..."
       />
-     
     </div>
   );
 };

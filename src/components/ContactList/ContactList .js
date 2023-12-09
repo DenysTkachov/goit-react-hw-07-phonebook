@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteContact } from '../../redux/contactsSlice';
+import { deleteContact } from '../../redux/contactsOperations';
 import { selectVisibleContacts } from '../../redux/selectors';
 
 const ContactList = () => {
@@ -8,7 +8,7 @@ const ContactList = () => {
   const visibleContacts = useSelector(selectVisibleContacts);
 
   const handleDeleteContact = id => {
-    dispatch(deleteContact({ id }));
+    dispatch(deleteContact(id));
   };
 
   return (
@@ -17,7 +17,7 @@ const ContactList = () => {
         <li key={contact.id}>
           {contact.name}: {contact.number}
           <button onClick={() => handleDeleteContact(contact.id)}>
-            Delete
+            Видалити
           </button>
         </li>
       ))}

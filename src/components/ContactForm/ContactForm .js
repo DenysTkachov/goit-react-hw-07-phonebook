@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { nanoid } from 'nanoid';
-import { addContact, selectContacts } from '../../redux/contactsSlice';
+import { addContact, fetchContacts } from '../../redux/contactsOperations';
+import { selectContacts } from '../../redux/selectors';
 
 const ContactForm = () => {
   const dispatch = useDispatch();
@@ -30,13 +31,19 @@ const ContactForm = () => {
       c => c.name.toLowerCase() === name.toLowerCase()
     );
     if (existingContact) {
-      setErrorMessage('This contact already exists.');
+      setErrorMessage('Цей контакт вже існує.');
       return;
     }
 
-    dispatch(addContact({ id: nanoid(), name, number }));
-    setContact({ name: '', number: '' });
-    setErrorMessage('');
+    dispatch(addContact({ id: nanoid(), name, number }))
+      .then(() => {
+        setContact({ name: '', number: '' });
+        setErrorMessage('');
+        dispatch(fetchContacts());
+      })
+      .catch(error => {
+        setErrorMessage(error.message || 'Failed to add contact.');
+      });
   };
 
   const handleKeyPress = e => {
@@ -47,7 +54,7 @@ const ContactForm = () => {
 
   return (
     <div>
-      <h2>Name</h2>
+      <h2>Ім'я</h2>
       <input
         type="text"
         name="name"
@@ -56,7 +63,7 @@ const ContactForm = () => {
         onKeyPress={handleKeyPress}
         required
       />
-      <h2>Number</h2>
+      <h2>Номер</h2>
       <input
         type="tel"
         name="number"
@@ -65,7 +72,7 @@ const ContactForm = () => {
         onKeyPress={handleKeyPress}
         required
       />
-      <button onClick={handleAddContact}>Add Contact</button>
+      <button onClick={handleAddContact}>Додати контакт</button>
       {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
     </div>
   );

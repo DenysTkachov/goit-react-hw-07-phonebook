@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { nanoid } from 'nanoid';
-import { addContact, fetchContacts } from '../../redux/contactsOperations';
+
+import { addContact } from '../../redux/contactsOperations';
 import { selectContacts } from '../../redux/selectors';
 
 const ContactForm = () => {
@@ -19,32 +19,36 @@ const ContactForm = () => {
     }));
   };
 
-  const handleAddContact = () => {
-    const { name, number } = contact;
+   const handleAddContact = () => {
+     const { name, number } = contact;
 
-    if (name.trim() === '' || number.trim() === '') {
-      setErrorMessage('Name and number are required.');
-      return;
-    }
+     if (name.trim() === '' || number.trim() === '') {
+       setErrorMessage('Name and number are required.');
+       return;
+     }
 
-    const existingContact = contacts.find(
-      c => c.name.toLowerCase() === name.toLowerCase()
-    );
-    if (existingContact) {
-      setErrorMessage('Цей контакт вже існує.');
-      return;
-    }
+     const existingContact = contacts.find(
+       c => c.name.toLowerCase() === name.toLowerCase()
+     );
+     if (existingContact) {
+       setErrorMessage('Цей контакт вже існує.');
+       return;
+     }
 
-    dispatch(addContact({ id: nanoid(), name, number }))
-      .then(() => {
-        setContact({ name: '', number: '' });
-        setErrorMessage('');
-        dispatch(fetchContacts());
-      })
-      .catch(error => {
-        setErrorMessage(error.message || 'Failed to add contact.');
-      });
-  };
+     dispatch(addContact({ name, number }))
+       .then(response => {
+         dispatch({
+           type: 'contacts/addContact',
+           payload: { id: response.id, name, number },
+         });
+         setContact({ name: '', number: '' });
+         setErrorMessage('');
+       })
+       .catch(error => {
+         setErrorMessage(error.message || 'Failed to add contact.');
+       });
+   };
+
 
   const handleKeyPress = e => {
     if (e.key === 'Enter') {

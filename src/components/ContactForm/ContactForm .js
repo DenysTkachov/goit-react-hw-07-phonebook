@@ -7,7 +7,7 @@ import { selectContacts } from '../../redux/selectors';
 const ContactForm = () => {
   const dispatch = useDispatch();
   const contacts = useSelector(selectContacts);
-  const [contact, setContact] = useState({ name: '', number: '' });
+  const [contact, setContact] = useState({ name: '', phone: '' });
   const [errorMessage, setErrorMessage] = useState('');
 
   const handleInputChange = e => {
@@ -20,65 +20,53 @@ const ContactForm = () => {
   };
 
    const handleAddContact = () => {
-     const { name, number } = contact;
+     const { name, phone } = contact;
 
-     if (name.trim() === '' || number.trim() === '') {
-       setErrorMessage('Name and number are required.');
+     if (name.trim() === '' || phone.trim() === '') {
+       setErrorMessage('Name and phone are required.');
        return;
      }
 
      const existingContact = contacts.find(
-       c => c.name.toLowerCase() === name.toLowerCase()
+       c => c.name.toLowerCase() === name.toLowerCase() || c.phone === phone
      );
      if (existingContact) {
-       setErrorMessage('Цей контакт вже існує.');
+       setErrorMessage('Цей контакт та номер вже існує.');
        return;
      }
 
-     dispatch(addContact({ name, number }))
-       .then(response => {
-         dispatch({
-           type: 'contacts/addContact',
-           payload: { id: response.id, name, number },
-         });
-         setContact({ name: '', number: '' });
-         setErrorMessage('');
-       })
-       .catch(error => {
-         setErrorMessage(error.message || 'Failed to add contact.');
-       });
+     dispatch(addContact({ name, phone }))
+
+     setContact({ name: '', phone: '' });
+     
    };
 
 
-  const handleKeyPress = e => {
-    if (e.key === 'Enter') {
-      handleAddContact();
-    }
-  };
+
 
   return (
-    <div>
-      <h2>Ім'я</h2>
-      <input
-        type="text"
-        name="name"
-        value={contact.name}
-        onChange={handleInputChange}
-        onKeyPress={handleKeyPress}
-        required
-      />
-      <h2>Номер</h2>
-      <input
-        type="tel"
-        name="number"
-        value={contact.number}
-        onChange={handleInputChange}
-        onKeyPress={handleKeyPress}
-        required
-      />
-      <button onClick={handleAddContact}>Додати контакт</button>
+    <>
+      <form onSubmit={handleAddContact}>
+        <label>Ім'я</label>
+        <input
+          type="text"
+          name="name"
+          value={contact.name}
+          onChange={handleInputChange}
+          required
+        />
+        <label>Номер</label>
+        <input
+          type="tel"
+          name="phone"
+          value={contact.phone}
+          onChange={handleInputChange}
+          required
+        />
+        <button type="submit">Додати контакт</button>
+      </form>
       {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
-    </div>
+    </>
   );
 };
 

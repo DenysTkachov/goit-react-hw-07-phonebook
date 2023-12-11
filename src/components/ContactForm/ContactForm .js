@@ -19,27 +19,27 @@ const ContactForm = () => {
     }));
   };
 
-   const handleAddContact = () => {
-     const { name, phone } = contact;
+    const handleAddContact = e => {
+      e.preventDefault();
+      const { name, phone } = contact;
 
-     if (name.trim() === '' || phone.trim() === '') {
-       setErrorMessage('Name and phone are required.');
-       return;
-     }
+      if (name.trim() === '' || phone.trim() === '') {
+        setErrorMessage('Name and phone are required.');
+        return;
+      }
 
-     const existingContact = contacts.find(
-       c => c.name.toLowerCase() === name.toLowerCase() || c.phone === phone
-     );
-     if (existingContact) {
-       setErrorMessage('Цей контакт та номер вже існує.');
-       return;
-     }
+      const existingContact = contacts.find(
+        c => c.name.toLowerCase() === name.toLowerCase() || c.phone === phone
+      );
+      if (existingContact) {
+        setErrorMessage('Цей контакт та номер вже існує.');
+        return;
+      }
 
-     dispatch(addContact({ name, phone }))
+      dispatch(addContact({ name, phone }));
 
-     setContact({ name: '', phone: '' });
-     
-   };
+      setContact({ name: '', phone: '' });
+    };
 
 
 
